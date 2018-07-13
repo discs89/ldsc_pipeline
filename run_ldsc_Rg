@@ -1,0 +1,45 @@
+###ENTER VARIABLES###
+GWAS1=$1
+GWAS2=$2
+N_GWAS1=$3
+N_GWAS2=$4
+NAME_GWAS1=$5
+NAME_GWAS2=$6
+
+###FIXED VARIABLES
+Software=/mnt/als-epilepsy/tools/ldsc
+HapMapSNPs=/mnt/als-epilepsy/ldsc/snplists/w_hm3.snplist
+OutDir=/mnt/als-epilepsy/ldsc
+KGenomes=/mnt/als-epilepsy/ldsc/1kg_phase3
+LDscoreDir=/mnt/als-epilepsy/ldsc/ld_scores_1kgphase3
+
+export PATH=/home/dick.schijven/miniconda2/bin:$PATH
+source activate ldsc
+
+printf "LD SCORE REGRESSION PIPELINE VERSION 1.1 - 16/08/2017\n"
+printf "Genetic correlation will be estimated between the following GWAS:\n\n"
+printf "GWAS 1\n"
+printf "Name: "${NAME_GWAS1}"\n"
+printf "Sample Size: "${N_GWAS1}"\n"
+printf "File: "${GWAS1}"\n\n"
+
+printf "GWAS 2\n"
+printf "Name: "${NAME_GWAS2}"\n"
+printf "Sample Size: "${N_GWAS2}"\n"
+printf "File: "${GWAS2}"\n\n"
+
+###ESTIMATE GENETIC CORRELATIONS
+printf "\n\nEstimating the genetic correlation between "${NAME_GWAS1}" and "${NAME_GWAS2}" based on variants with 0.05 < MAF < 0.5\n"
+ 
+${Software}/ldsc.py --rg ${OutDir}/munged_sumstats/${NAME_GWAS1}.munge.sumstats.gz,${OutDir}/munged_sumstats/${NAME_GWAS2}.munge.sumstats.gz \
+					--ref-ld-chr ${LDscoreDir}/1kgenomes_phase3_eur_chr@ \
+					--w-ld-chr ${LDscoreDir}/1kgenomes_phase3_eur_chr@ \
+					--out ${OutDir}/results/rg.${NAME_GWAS1}.${NAME_GWAS2}_m550
+
+printf "\n\nEstimating the genetic correlation between "${NAME_GWAS1}" and "${NAME_GWAS2}" based on variants with no MAF restrictions\n"
+
+${Software}/ldsc.py --rg ${OutDir}/munged_sumstats/${NAME_GWAS1}.munge.sumstats.gz,${OutDir}/munged_sumstats/${NAME_GWAS2}.munge.sumstats.gz \
+					--ref-ld-chr ${LDscoreDir}/1kgenomes_phase3_eur_chr@ \
+					--w-ld-chr ${LDscoreDir}/1kgenomes_phase3_eur_chr@ \
+					--not-M-5-50 \
+					--out ${OutDir}/results/rg.${NAME_GWAS1}.${NAME_GWAS2}_notm550
