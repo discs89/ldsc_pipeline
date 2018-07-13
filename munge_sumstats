@@ -1,0 +1,45 @@
+###ENTER VARIABLES###
+GWAS=$1
+NAME_GWAS=$2
+GWAS_N=$3
+
+###FIXED VARIABLES
+Software=/mnt/als-epilepsy/tools/ldsc
+HapMapSNPs=/mnt/als-epilepsy/ldsc/snplists/w_hm3.snplist
+OutDir=/mnt/als-epilepsy/ldsc
+KGenomes=/mnt/als-epilepsy/ldsc/1kg_phase3
+
+source /mnt/als-epilepsy/tools/ldsc_dependencies/bin/activate
+
+###MUNGE SUMMARY STATISITCS (ONLY IF A FILE WITH THAT NAME DOES NOT EXIST ALREADY)
+printf "\n\nMunging summary statistics for "${NAME_GWAS}"\n"
+printf "Checking if munged file already exists for this GWAS...\n"
+if [ -e ${OutDir}/munged_sumstats/${NAME_GWAS}.munge.sumstats.gz ]
+then
+	
+	printf "A munged file with this name already exists. Terminating...\n"
+	exit
+	
+elif grep -q 'INFO' ${GWAS}
+then
+	
+	printf "No munged file detected, starting munge...\n"
+	printf "Input file contains INFO column, no merge with HapMap3 SNPs required\n\n"
+	${Software}/munge_sumstats.py \
+	--sumstats ${GWAS} \
+	--N ${GWAS_N} \
+	--out ${OutDir}/munged_sumstats/${NAME_GWAS}.munge
+	
+else
+	
+	printf "No munged file detected, starting munge...\n"
+	printf "This file does not contain a column with INFO scores, merging with HapMap 3 SNPs\n\n"
+	${Software}/munge_sumstats.py \
+	--sumstats ${GWAS} \
+	--N ${GWAS_N} \
+	--merge-alleles ${HapMapSNPs} \
+	--out ${OutDir}/munged_sumstats/${NAME_GWAS}.munge
+	
+fi
+
+
