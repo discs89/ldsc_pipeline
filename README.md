@@ -1,12 +1,11 @@
 # LD Score Regression pipeline
 
 This README provides information for running the LD score regression pipeline on single traits (for estimating heritability) or multiple traits (for estimating heritability and genetic correlation).
-[LD Score regression methodology](https://www.nature.com/articles/ng.3406) has been published in Nature Genetics by Bulik-Sullivan *et al.*, and the software and detailed information [can be found on GitHub](https://github.com/bulik/ldsc/)
-Detailed information about the LD score regression method can be found here: 
+[LD Score regression methodology](https://www.nature.com/articles/ng.3406) has been published in Nature Genetics by Bulik-Sullivan *et al.*, and the software [can be found on GitHub](https://github.com/bulik/ldsc/). Also refer to this page for detailed information about installation of the software and required python libraries.
 
 ### Input data
 
-The input for LD score regression are GWAS summary statistics, to be provided in plain text format.
+The input for this LD score regression pipeline are GWAS summary statistics, to be provided in plain text format.
 
 Mandatory input columns are (required column name between brackets):  
 1. SNP identifier, usually rs-numer (SNP).  
@@ -17,6 +16,10 @@ Mandatory input columns are (required column name between brackets):
 
 Optional columns include (required column name between brackets):  
 6. Sample size for SNP in the GWAS (N).  
+7. INFO/imputation quality metric (INFO).
+  
+Besides GWAS summary-level data it is recommended to download a list of good quality HapMap SNPs, as suggested on the LDSC GitHub. When an INFO columns is provided in the summary-level data, this file will be ignored. Furthermore, a reference panel (e.g. 1000 genomes, PLINK binary format) for the calculation of LD scores is required.  
+  
 
 
 ### Munge summary statistics
@@ -33,5 +36,8 @@ An example command could thus look like this:
 ```
 ./munge_sumstats.sh /path/to/my_gwas.txt interesting_phenotype 47000
 ```
+  
+### Estimate genetic correlation
+
 
 
